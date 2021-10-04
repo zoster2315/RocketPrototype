@@ -428,14 +428,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1988830390, guid: 49133feeb853019479162eab78d37aba, type: 3}
-      propertyPath: RotationSpeed
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 1988830395, guid: 49133feeb853019479162eab78d37aba, type: 3}
-      propertyPath: m_Drag
-      value: 0.25
-      objectReference: {fileID: 0}
     - target: {fileID: 2891773157760424329, guid: 49133feeb853019479162eab78d37aba, type: 3}
       propertyPath: m_Name
       value: Rocket

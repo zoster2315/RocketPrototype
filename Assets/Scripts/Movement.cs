@@ -11,6 +11,12 @@ public class Movement : MonoBehaviour
     float RotationSpeed = 30;
     [SerializeField]
     AudioClip MainEngine;
+    [SerializeField]
+    ParticleSystem mainBooster;
+    [SerializeField]
+    ParticleSystem leftBooster;
+    [SerializeField]
+    ParticleSystem rightBooster;
 
     Rigidbody ThisRigitbody = null;
     AudioSource ThisAudioSource = null;
@@ -37,10 +43,17 @@ public class Movement : MonoBehaviour
         {
             ThisRigitbody.AddRelativeForce(Vector3.up * ThrustSpeed * Time.deltaTime);
             if (!ThisAudioSource.isPlaying)
-            ThisAudioSource.PlayOneShot(MainEngine);
+                ThisAudioSource.PlayOneShot(MainEngine);
+            if (!mainBooster.isPlaying)
+                mainBooster.Play();
         }
-        else if (ThisAudioSource.isPlaying)
-            ThisAudioSource.Stop();
+        else
+        {
+            if (ThisAudioSource.isPlaying)
+                ThisAudioSource.Stop();
+            if (mainBooster.isPlaying)
+                mainBooster.Stop();
+        }
     }
 
     void ProcessRotation()
@@ -51,16 +64,23 @@ public class Movement : MonoBehaviour
         if (right && !left)
         {
             Rotate(-RotationSpeed);
+            if (!leftBooster.isPlaying)
+                leftBooster.Play();
         }
         else if (left && !right)
         {
             Rotate(RotationSpeed);
+            if (!rightBooster.isPlaying)
+                rightBooster.Play();
         }
         else if (left && right)
         {
             Debug.Log("Cant rotate conflict comands");
         }
-
+        if (!left && rightBooster.isPlaying)
+            rightBooster.Stop();
+        if (!right && leftBooster.isPlaying)
+            leftBooster.Stop();
     }
 
     private void Rotate(float rotationSpeed)

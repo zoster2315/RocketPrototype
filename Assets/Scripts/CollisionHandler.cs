@@ -9,8 +9,14 @@ public class CollisionHandler : MonoBehaviour
     AudioClip successClip;
     [SerializeField]
     AudioClip crashClip;
+    [SerializeField]
+    ParticleSystem successParticles;
+    [SerializeField]
+    ParticleSystem crashParticles;
 
     AudioSource thisAudioSource;
+
+    bool isTransitioning = false;
 
     private void Start()
     {
@@ -19,7 +25,7 @@ public class CollisionHandler : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-         switch (collision.gameObject.tag)
+        switch (collision.gameObject.tag)
         {
             case "Friendly":
                 Debug.Log("This thing is friendly.");
@@ -38,21 +44,33 @@ public class CollisionHandler : MonoBehaviour
 
     void StartCrashSequence()
     {
-        // todo add SFX opon crash
-        thisAudioSource.PlayOneShot(crashClip);
-        // todo add particle effect upon crash
-        DisableControl();
-        Invoke("ReloadLevel", LoadLevelDelay);
-        //ReloadLevel();
+        if (!isTransitioning)
+        {
+            // todo add SFX opon crash
+            // todo add particle effect upon crash
+            DisableControl();
+            thisAudioSource.Stop();
+            thisAudioSource.PlayOneShot(crashClip);
+            crashParticles.Play();
+            Invoke("ReloadLevel", LoadLevelDelay);
+            //ReloadLevel();
+            isTransitioning = true;
+        }
     }
 
     void StartSuccessSequence()
     {
-        // todo add SFX opon success
-        thisAudioSource.PlayOneShot(successClip);
-        // todo add particle effect upon success
-        DisableControl();
-        Invoke("LoadNextLevel", LoadLevelDelay);
+        if (!isTransitioning)
+        {
+            // todo add SFX opon success
+            // todo add particle effect upon success
+            DisableControl();
+            thisAudioSource.Stop();
+            thisAudioSource.PlayOneShot(successClip);
+            successParticles.Play();
+            Invoke("LoadNextLevel", LoadLevelDelay);
+            isTransitioning = true;
+        }
     }
 
     void DisableControl()
@@ -65,6 +83,7 @@ public class CollisionHandler : MonoBehaviour
     {
         var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentSceneIndex);
+        isTransitioning = false;
     }
 
     void LoadNextLevel()
@@ -73,6 +92,6 @@ public class CollisionHandler : MonoBehaviour
         if (nextSceneIndex >= SceneManager.sceneCountInBuildSettings)
             nextSceneIndex = 0;
         SceneManager.LoadScene(nextSceneIndex);
-
+        isTransitioning = false;
     }
 }

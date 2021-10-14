@@ -17,14 +17,27 @@ public class CollisionHandler : MonoBehaviour
     AudioSource thisAudioSource;
 
     bool isTransitioning = false;
+    bool collisionEnable = true;
 
     private void Start()
     {
         thisAudioSource = GetComponent<AudioSource>();
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKey(KeyCode.L))
+            LoadNextLevel();
+        if (Input.GetKey(KeyCode.C))
+            collisionEnable = !collisionEnable;
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
+        if (isTransitioning || !collisionEnable)
+            return;
+
         switch (collision.gameObject.tag)
         {
             case "Friendly":
@@ -44,33 +57,27 @@ public class CollisionHandler : MonoBehaviour
 
     void StartCrashSequence()
     {
-        if (!isTransitioning)
-        {
-            // todo add SFX opon crash
-            // todo add particle effect upon crash
-            DisableControl();
-            thisAudioSource.Stop();
-            thisAudioSource.PlayOneShot(crashClip);
-            crashParticles.Play();
-            Invoke("ReloadLevel", LoadLevelDelay);
-            //ReloadLevel();
-            isTransitioning = true;
-        }
+        // todo add SFX opon crash
+        // todo add particle effect upon crash
+        DisableControl();
+        thisAudioSource.Stop();
+        thisAudioSource.PlayOneShot(crashClip);
+        crashParticles.Play();
+        Invoke("ReloadLevel", LoadLevelDelay);
+        //ReloadLevel();
+        isTransitioning = true;
     }
 
     void StartSuccessSequence()
     {
-        if (!isTransitioning)
-        {
-            // todo add SFX opon success
-            // todo add particle effect upon success
-            DisableControl();
-            thisAudioSource.Stop();
-            thisAudioSource.PlayOneShot(successClip);
-            successParticles.Play();
-            Invoke("LoadNextLevel", LoadLevelDelay);
-            isTransitioning = true;
-        }
+        // todo add SFX opon success
+        // todo add particle effect upon success
+        DisableControl();
+        thisAudioSource.Stop();
+        thisAudioSource.PlayOneShot(successClip);
+        successParticles.Play();
+        Invoke("LoadNextLevel", LoadLevelDelay);
+        isTransitioning = true;
     }
 
     void DisableControl()
@@ -86,7 +93,7 @@ public class CollisionHandler : MonoBehaviour
         isTransitioning = false;
     }
 
-    void LoadNextLevel()
+    public void LoadNextLevel()
     {
         var nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
         if (nextSceneIndex >= SceneManager.sceneCountInBuildSettings)

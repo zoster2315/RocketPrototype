@@ -40,20 +40,9 @@ public class Movement : MonoBehaviour
     void ProcessThrust()
     {
         if (Input.GetKey(KeyCode.Space))
-        {
-            ThisRigitbody.AddRelativeForce(Vector3.up * ThrustSpeed * Time.deltaTime);
-            if (!ThisAudioSource.isPlaying)
-                ThisAudioSource.PlayOneShot(MainEngine);
-            if (!mainBooster.isPlaying)
-                mainBooster.Play();
-        }
+            StartThrusting();
         else
-        {
-            if (ThisAudioSource.isPlaying)
-                ThisAudioSource.Stop();
-            if (mainBooster.isPlaying)
-                mainBooster.Stop();
-        }
+            StopThrusting();
     }
 
     void ProcessRotation()
@@ -63,24 +52,58 @@ public class Movement : MonoBehaviour
 
         if (right && !left)
         {
-            Rotate(-RotationSpeed);
-            if (!leftBooster.isPlaying)
-                leftBooster.Play();
+            StartRightRotation();
         }
         else if (left && !right)
         {
-            Rotate(RotationSpeed);
-            if (!rightBooster.isPlaying)
-                rightBooster.Play();
+            StartLeftRotation();
         }
-        else if (left && right)
-        {
-            Debug.Log("Cant rotate conflict comands");
-        }
+
         if (!left && rightBooster.isPlaying)
-            rightBooster.Stop();
+            StopLeftRotation();
         if (!right && leftBooster.isPlaying)
-            leftBooster.Stop();
+            StopRightRotation();
+    }
+
+    private void StartThrusting()
+    {
+        ThisRigitbody.AddRelativeForce(Vector3.up * ThrustSpeed * Time.deltaTime);
+        if (!ThisAudioSource.isPlaying)
+            ThisAudioSource.PlayOneShot(MainEngine);
+        if (!mainBooster.isPlaying)
+            mainBooster.Play();
+    }
+
+    private void StopThrusting()
+    {
+        if (ThisAudioSource.isPlaying)
+            ThisAudioSource.Stop();
+        if (mainBooster.isPlaying)
+            mainBooster.Stop();
+    }
+
+    private void StartRightRotation()
+    {
+        Rotate(-RotationSpeed);
+        if (!leftBooster.isPlaying)
+            leftBooster.Play();
+    }
+
+    private void StartLeftRotation()
+    {
+        Rotate(RotationSpeed);
+        if (!rightBooster.isPlaying)
+            rightBooster.Play();
+    }
+
+    private void StopLeftRotation()
+    {
+        rightBooster.Stop();
+    }
+
+    private void StopRightRotation()
+    {
+        leftBooster.Stop();
     }
 
     private void Rotate(float rotationSpeed)
